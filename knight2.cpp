@@ -1,8 +1,145 @@
 #include "knight2.h"
 
 /* * * BEGIN implementation of class BaseBag * * */
+bool BaseBag::insertFirst(BaseItem* item) {
+    if(this->head_item == 0) {
+        this->numbers = 1;
+        this->head_item = item;
+        this->tail_item = this->head_item;
+        this->head_item->set_next_item(0);
+        return true;
+    }
+    else {
+        if (
+            (this->knight->get_knightType() == DRAGON && this->numbers <= 13 && item->get_item_type() != ANTIDOTE)
+            || (this->knight->get_knightType() == LANCELOT && this->numbers <= 15)
+            || (this->knight->get_knightType() == NORMAL && this->numbers <= 18)
+            || (this->knight->get_knightType() == PALADIN)
+            ) 
+        {
+            this->numbers++;
+            item->set_next_item(this->head_item);
+            this->head_item = item;
+            return true;
+        }
+        else return false;
+    }
+};
 
+BaseItem* BaseBag::get(ItemType itemType) {
+    BaseItem* temp = this->head_item;
+    while(temp) {
+        if (temp->get_item_type() == itemType) {return temp;}
+        else temp = temp->get_next_item();
+    }
+
+    return nullptr;
+};
+
+string BaseBag::toString() const {
+    string res = "Bag[count=";
+    res += to_string(this->numbers);
+    res += ";";
+
+    BaseItem* temp = this->head_item;
+    while (temp) {
+        if (temp->get_item_type() == ANTIDOTE) 
+            res += "Antidote,";
+        else if (temp->get_item_type() == PHOENIXDOWNI) 
+            res += "PhoenixI,";
+        else if (temp->get_item_type() == PHOENIXDOWNII)
+            res += "PhoenixII";
+        else if (temp->get_item_type() == PHOENIXDOWNIII) 
+            res += "PhoenixIII";
+        else if (temp->get_item_type() == PHOENIXDOWNIV)
+            res += "PhoenixIV";
+        else temp = temp->get_next_item();
+    }
+
+    res += "]";
+    return res;
+};
 /* * * END implementation of class BaseBag * * */
+
+DragonKnight_Bag::DragonKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote) {
+    this->knight = knight;
+    this->numbers = 0;
+    this->head_item = 0;
+    this->tail_item = 0;
+    
+    if (number_phoenixdownI > 0) {
+        for (size_t i = 0; i < number_phoenixdownI; i++){
+            BaseItem* newItem = new PhoenixDownI(PHOENIXDOWNI);
+            this->insertFirst(newItem);
+        }
+        
+    }
+    
+    if (number_antidote > 0) {
+        BaseItem* newItem = new Antidote(ANTIDOTE);
+        this->insertFirst(newItem);
+    }
+};
+
+LancelotKnight_Bag::LancelotKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote) {
+    this->knight = knight;
+    this->numbers = 0;
+    this->head_item = 0;
+    this->tail_item = 0;
+    
+    if (number_phoenixdownI > 0) {
+        for (size_t i = 0; i < number_phoenixdownI; i++){
+            BaseItem* newItem = new PhoenixDownI(PHOENIXDOWNI);
+            this->insertFirst(newItem);
+        }
+        
+    }
+    
+    if (number_antidote > 0) {
+        BaseItem* newItem = new Antidote(ANTIDOTE);
+        this->insertFirst(newItem);
+    }
+};
+
+PaladinKnight_Bag::PaladinKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote) {
+    this->knight = knight;
+    this->numbers = 0;
+    this->head_item = 0;
+    this->tail_item = 0;
+    
+    if (number_phoenixdownI > 0) {
+        for (size_t i = 0; i < number_phoenixdownI; i++){
+            BaseItem* newItem = new PhoenixDownI(PHOENIXDOWNI);
+            this->insertFirst(newItem);
+        }
+        
+    }
+    
+    if (number_antidote > 0) {
+        BaseItem* newItem = new Antidote(ANTIDOTE);
+        this->insertFirst(newItem);
+    }
+};
+
+NormalKnight_Bag::NormalKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote) {
+    this->knight = knight;
+    this->numbers = 0;
+    this->head_item = 0;
+    this->tail_item = 0;
+    
+    if (number_phoenixdownI > 0) {
+        for (size_t i = 0; i < number_phoenixdownI; i++){
+            BaseItem* newItem = new PhoenixDownI(PHOENIXDOWNI);
+            this->insertFirst(newItem);
+        }
+        
+    }
+    
+    if (number_antidote > 0) {
+        BaseItem* newItem = new Antidote(ANTIDOTE);
+        this->insertFirst(newItem);
+    }
+};
 
 /* * * BEGIN implementation of class BaseKnight * * */
 string BaseKnight::toString() const {
@@ -23,11 +160,6 @@ string BaseKnight::toString() const {
 
 BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI) {
     BaseKnight * knight;
-
-    // can chinh sua cho phoenixdownI nay vi trong thuoc tinh cua base knight khong co thuoc tinh nay
-    // error
-    // knight->phoenixdownI = phoenixdownI;
-    /** **/
     
     if (knight->is_paladin(maxhp)) {
         knight = new PaladinKnight;
@@ -37,10 +169,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->level = level;
         knight->gil = gil;
         knight->antidote = antidote;
-        
-        // chua tao tui do cho hiep si
-        // knight->bag = ??
-        /***/
+        knight->bag = new PaladinKnight_Bag(knight, phoenixdownI, antidote);
 
         knight->knightType = PALADIN;
     }
@@ -52,11 +181,8 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->level = level;
         knight->gil = gil;
         knight->antidote = antidote;
-        
-        // chua tao tui do cho hiep si
-        // knight->bag = ??
-        /***/
 
+        knight->bag = new LancelotKnight_Bag(knight, phoenixdownI, antidote);
         knight->knightType = LANCELOT;
     }
     else if (knight->is_dragon_knight(maxhp)) {
@@ -67,10 +193,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->level = level;
         knight->gil = gil;
         knight->antidote = antidote;
-        
-        // chua tao tui do cho hiep si
-        // knight->bag = ??
-        /***/
+        knight->bag = new DragonKnight_Bag(knight, phoenixdownI, antidote);
 
         knight->knightType = DRAGON;
     }
@@ -83,10 +206,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->gil = gil;
         knight->antidote = antidote;
         
-        // chua tao tui do cho hiep si
-        // knight->bag = ??
-        /***/
-
+        knight->bag = new NormalKnight_Bag(knight, phoenixdownI, antidote);
         knight->knightType = NORMAL;
     }
 
@@ -215,5 +335,19 @@ KnightAdventure::KnightAdventure() {
     armyKnights = nullptr;
     events = nullptr;
 }
+
+KnightAdventure::~KnightAdventure() {
+    delete this->armyKnights;
+    delete this->events;
+};
+
+void KnightAdventure::loadArmyKnights(const string & file_armyknight) {
+    this->armyKnights = new ArmyKnights(file_armyknight);
+};
+
+void KnightAdventure::loadEvents(const string & file_events) {
+    this->events = new Events(file_events);
+};
+void KnightAdventure::run() {};
 
 /* * * END implementation of class KnightAdventure * * */

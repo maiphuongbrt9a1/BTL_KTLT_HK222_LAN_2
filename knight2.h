@@ -6,7 +6,7 @@
 // #define DEBUG
 
 enum ItemType {ANTIDOTE = 0, PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV, PALADIN_SHIELD, 
-                LANCELOT_SPEAR, GUINEVERE_HAIR, EXCALIBUR_SWORD};
+                LANCELOT_SPEAR, GUINEVERE_HAIR, EXCALIBUR_SWORD, NULL_ITEM};
 
 class BaseItem;
 class BaseKnight;
@@ -16,7 +16,11 @@ class BaseOpponent {
     ~BaseOpponent() {};
 };
 
-class MadBear : public BaseOpponent {};
+class MadBear : public BaseOpponent {
+    protected:
+    // xac dinh cac thong so cho tung muc tieu
+    // gom tien, levelo, basedamage
+};
 class Bandit : public BaseOpponent {};
 class LordLupin : public BaseOpponent {};
 class Elf : public BaseOpponent {};
@@ -37,53 +41,36 @@ public:
     virtual string toString() const;
     BaseKnight* get_knight_name () {return this->knight;};
     void set_knight_name (BaseKnight* knight) {this->knight = knight;};
-private:
+protected:
+    int numbers;
     BaseKnight* knight;
+    BaseItem * head_item;
+    BaseItem* tail_item;
 };
 
 class DragonKnight_Bag : public BaseBag {
     public:
     DragonKnight_Bag() {};
+    DragonKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~DragonKnight_Bag() {};
-    bool insertFirst(BaseItem * item);
-    BaseItem * get(ItemType itemType);
-    string toString() const;
-
-    private:
-    BaseItem** item_arr;
 };
 class LancelotKnight_Bag : public BaseBag {
     public:
     LancelotKnight_Bag(){};
+    LancelotKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~LancelotKnight_Bag(){};
-    bool insertFirst(BaseItem * item);
-    BaseItem * get(ItemType itemType);
-    string toString() const;
-    
-    private:
-    BaseItem** item_arr;
 };
 class PaladinKnight_Bag : public BaseBag {
     public:
     PaladinKnight_Bag(){};
+    PaladinKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~PaladinKnight_Bag(){};
-    bool insertFirst(BaseItem * item);
-    BaseItem * get(ItemType itemType);
-    string toString() const;
-
-    private:
-    BaseItem** item_arr;
 };
 class NormalKnight_Bag : public BaseBag {
     public:
     NormalKnight_Bag(){};
+    NormalKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~NormalKnight_Bag(){};
-    bool insertFirst(BaseItem * item);
-    BaseItem * get(ItemType itemType);
-    string toString() const;
-
-    private:
-    BaseItem** item_arr;
 };
 
 enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL };
@@ -105,6 +92,7 @@ public:
     bool is_paladin(int HP) const;
     bool is_lancelot(int HP) const;
     bool is_dragon_knight(int HP) const;
+    KnightType get_knightType() {return this->knightType;};
 
     ~BaseKnight() {};
 };
@@ -189,7 +177,7 @@ public:
     void printInfo() const;
     void printResult(bool win) const;
 
-    BaseKnight* getKnight (int i) {return this->knights_arr[i];}
+    BaseKnight** get_knights_arr () {return this->knights_arr;};
 private:
     BaseKnight** knights_arr;
     BaseKnight* ptr_lastKnight;
@@ -201,44 +189,96 @@ class BaseItem {
 public:
     virtual bool canUse ( BaseKnight * knight ) = 0;
     virtual void use ( BaseKnight * knight ) = 0;
-    BaseItem () {};
+    
+    void set_next_item (BaseItem* item) {this->next = item;};
+    BaseItem* get_next_item() {return this->next;};
+    
+    void set_item_type(ItemType itemType) {this->item = itemType;};
+    ItemType get_item_type () {return this->item;};
+    
+    BaseItem () {
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+
     ~BaseItem() {};
+protected:
+    ItemType item;
+    BaseItem* next;
 };
 
 class Antidote : public BaseItem {
     public:
-    Antidote() {};
+    Antidote() {
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+
+    Antidote(ItemType itemType = NULL_ITEM, BaseItem* nextItem = 0) {
+        this->item = itemType;
+        this->next = nextItem;
+    };
+
     ~Antidote() {};
     bool canUse ( BaseKnight * knight );
     void use ( BaseKnight * knight );
-    
-    private:
 
 };
 class PhoenixDownI : public BaseItem {
     public:
-    PhoenixDownI(){};
+    PhoenixDownI(){
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+    PhoenixDownI(ItemType itemType = NULL_ITEM, BaseItem* nextItem = 0) {
+        this->item = itemType;
+        this->next = nextItem;
+    };
     ~PhoenixDownI(){};;
     bool canUse ( BaseKnight * knight );
     void use ( BaseKnight * knight );
 };
 class PhoenixDownII : public BaseItem {
     public:
-    PhoenixDownII(){};
+    PhoenixDownII(){
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+
+    PhoenixDownII(ItemType itemType = NULL_ITEM, BaseItem* nextItem = 0) {
+        this->item = itemType;
+        this->next = nextItem;
+    };
     ~PhoenixDownII(){};;
     bool canUse ( BaseKnight * knight );
     void use ( BaseKnight * knight );
 };
 class PhoenixDownIII : public BaseItem {
     public:
-    PhoenixDownIII(){};
+    PhoenixDownIII(){
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+
+    PhoenixDownIII(ItemType itemType = NULL_ITEM, BaseItem* nextItem = 0) {
+        this->item = itemType;
+        this->next = nextItem;
+    };
     ~PhoenixDownIII(){};;
     bool canUse ( BaseKnight * knight );
     void use ( BaseKnight * knight );
 };
 class PhoenixDownIV : public BaseItem {
     public:
-    PhoenixDownIV(){};
+    PhoenixDownIV(){
+        this->item = NULL_ITEM;
+        this->next = 0;
+    };
+
+    PhoenixDownIV(ItemType itemType = NULL_ITEM, BaseItem* nextItem = 0) {
+        this->item = itemType;
+        this->next = nextItem;
+    };
     ~PhoenixDownIV(){};;
     bool canUse ( BaseKnight * knight );
     void use ( BaseKnight * knight );
@@ -251,7 +291,7 @@ private:
 
 public:
     KnightAdventure();
-    ~KnightAdventure(); // TODO:
+    ~KnightAdventure();
 
     void loadArmyKnights(const string &);
     void loadEvents(const string &);
