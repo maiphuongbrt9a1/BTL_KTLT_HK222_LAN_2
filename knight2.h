@@ -17,18 +17,165 @@ class BaseOpponent {
 };
 
 class MadBear : public BaseOpponent {
-    protected:
-    // xac dinh cac thong so cho tung muc tieu
-    // gom tien, levelo, basedamage
+public:
+    MadBear() {};
+    
+    MadBear(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->gil = 100;
+        this->baseDamage = 10;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~MadBear() {};    
+protected:
+    int levelO;
+    int baseDamage;
+    int i;
+    int id_event;
+    int gil;
 };
-class Bandit : public BaseOpponent {};
-class LordLupin : public BaseOpponent {};
-class Elf : public BaseOpponent {};
-class Troll : public BaseOpponent {};
-class Tornbery : public BaseOpponent {};
-class QueenOfCards : public BaseOpponent {};
-class NinaDeRings : public BaseOpponent {};
-class DurianGarden : public BaseOpponent {};
+class Bandit : public BaseOpponent {
+public:
+    Bandit() {};
+    Bandit(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->gil = 150;
+        this->baseDamage = 15;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~Bandit() {};
+protected:
+    int levelO;
+    int baseDamage;
+    int i;
+    int id_event;
+    int gil;
+};
+
+class LordLupin : public BaseOpponent {
+public:
+    LordLupin() {};
+    LordLupin(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->gil = 450;
+        this->baseDamage = 45;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~LordLupin() {};
+protected:
+    int levelO;
+    int baseDamage;
+    int i;
+    int id_event;
+    int gil;
+};
+
+class Elf : public BaseOpponent {
+public:
+    Elf() {};
+    Elf(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->gil = 750;
+        this->baseDamage = 75;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~Elf() {};
+protected:
+    int levelO;
+    int baseDamage;
+    int i;
+    int id_event;
+    int gil;
+};
+
+class Troll : public BaseOpponent {
+public:
+    Troll() {};
+    Troll(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->gil = 800;
+        this->baseDamage = 95;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~Troll() {};
+protected:
+    int levelO;
+    int baseDamage;
+    int i;
+    int id_event;
+    int gil;
+};
+
+class Tornbery : public BaseOpponent {
+public:
+    Tornbery() {};
+    Tornbery(int i, int id_event) {
+        this->i = i;
+        this->id_event = id_event;
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+    };
+    ~Tornbery() {};
+protected:
+    int levelO;
+    int i;
+    int id_event;
+    // bool poisoned;
+};
+
+class QueenOfCards : public BaseOpponent {
+public:
+    QueenOfCards() {};
+    QueenOfCards(int i, int id_event, BaseKnight* lastKnight) {
+        this->i = i;
+        this->id_event = id_event;
+        this->prize_money = lastKnight->get_gil();
+        this->levelO = (this->i + this->id_event) % 10 + 1;
+
+    };
+    ~QueenOfCards() {};
+protected:
+    int levelO;
+    int i;
+    int id_event;
+    int prize_money;
+};
+
+class NinaDeRings : public BaseOpponent {
+public:
+    NinaDeRings() {};
+    NinaDeRings(BaseKnight* lastKnight) {
+        if (lastKnight->get_gil() >= 50) {
+            int temp = lastKnight->get_maxhp() / 3;
+            if (lastKnight->get_hp() < temp) {
+                int new_gil = lastKnight->get_gil() - 50;
+                int new_hp = lastKnight->get_hp() + (lastKnight->get_maxhp() / 5);
+                lastKnight->set_gil(new_gil);
+                lastKnight->set_hp(new_hp, lastKnight->get_maxhp());
+            }
+        }
+
+    };
+    ~NinaDeRings() {};
+};
+class DurianGarden : public BaseOpponent {
+public:
+    DurianGarden() {};
+    DurianGarden(BaseKnight* lastKnight) {
+        lastKnight->set_hp(lastKnight->get_maxhp(), lastKnight->get_maxhp());
+    };
+    ~DurianGarden() {};
+};
+
 class OmegaWeapon : public BaseOpponent {};
 class Hades : public BaseOpponent {};
 
@@ -89,10 +236,24 @@ public:
     BaseKnight() {};
     static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
     string toString() const;
+    
     bool is_paladin(int HP) const;
     bool is_lancelot(int HP) const;
     bool is_dragon_knight(int HP) const;
     KnightType get_knightType() {return this->knightType;};
+
+    int get_gil() const {return this->gil;};
+    void set_gil(int gil) {this->gil = gil;};
+    int get_hp() const {return this->hp;};
+    void set_hp(int hp, int maxhp) {
+        if (hp <= maxhp) {this->hp = hp;}
+        else this->hp = maxhp;
+    };
+    int get_maxhp() const {return this->maxhp;};
+    int get_level() const {return this->level;};
+    int get_antidote() const {return this->antidote;};
+    void set_antidote(int i) {this->antidote = i;};
+    BaseBag* get_bag() {return this->bag;};
 
     ~BaseKnight() {};
 };
