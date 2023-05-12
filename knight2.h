@@ -22,6 +22,7 @@ protected:
     int maxhp;
     int level;
     int gil;
+    int gil_changes;
     int antidote;
     BaseBag * bag;
     KnightType knightType;
@@ -265,7 +266,7 @@ public:
 class QueenOfCards : public BaseOpponent {
 public:
     QueenOfCards() {};
-    QueenOfCards(int i, int id_event, BaseKnight* lastKnight);
+    QueenOfCards(int i, int id_event);
     int get_event_id () {return this->id_event;};
     int get_levelO () {return this->levelO;};
     int get_baseDamage () {return this->baseDamage;};
@@ -285,7 +286,7 @@ public:
 class NinaDeRings : public BaseOpponent {
 public:
     NinaDeRings() {};
-    NinaDeRings(int event_id, BaseKnight* lastKnight);
+    NinaDeRings(int event_id);
     int get_event_id () {return this->id_event;};
     int get_levelO () {return this->levelO;};
     int get_baseDamage () {return this->baseDamage;};
@@ -296,7 +297,7 @@ public:
 class DurianGarden : public BaseOpponent {
 public:
     DurianGarden() {};
-    DurianGarden(int event_id, BaseKnight* lastKnight);
+    DurianGarden(int event_id);
     ~DurianGarden() {};
     int get_event_id () {return this->id_event;};
     int get_levelO () {return this->levelO;};
@@ -491,8 +492,8 @@ class Antidote : public BaseItem {
         this->item_type = ANTIDOTE;
     };
     ~Antidote() {};
-    bool canUse ( BaseKnight * knight );
-    void use ( BaseKnight * knight ){};
+    bool canUse ( BaseKnight * knight) {};
+    void use ( BaseKnight * knight ) {};
 
 };
 class PhoenixDownI : public BaseItem {
