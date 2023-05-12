@@ -366,8 +366,7 @@ ArmyKnights::~ArmyKnights() {
 };
 
 bool ArmyKnights::fight(BaseOpponent * opponent) {
-    // ArmyKnights::lastKnight()->get_knightType();
-    // this->ptr_lastKnight
+    return this->ptr_lastKnight->fight(opponent);
     
 };
 bool ArmyKnights::adventure (Events * events){};
@@ -417,39 +416,39 @@ DurianGarden::DurianGarden(int event_id) {
     this->id_event = event_id;
 };
 
-OmegaWeapon::OmegaWeapon(int event_id, BaseKnight* lastKnight, ArmyKnights* army){
+OmegaWeapon::OmegaWeapon(int event_id){
     this->id_event = event_id;
-    if (!army->get_omega_weapon_flag()) {
-        if ((lastKnight->get_level() == 10 && lastKnight->get_hp() == lastKnight->get_maxhp())
-            || (lastKnight->get_knightType() == DRAGON)) 
-        {
-            lastKnight->set_level(10);
-            lastKnight->set_gil(999);
-        }
-        else {
-            lastKnight->set_hp(0, lastKnight->get_maxhp());
-            lastKnight->revival(lastKnight);
-        }
+    // if (!army->get_omega_weapon_flag()) {
+    //     if ((lastKnight->get_level() == 10 && lastKnight->get_hp() == lastKnight->get_maxhp())
+    //         || (lastKnight->get_knightType() == DRAGON)) 
+    //     {
+    //         lastKnight->set_level(10);
+    //         lastKnight->set_gil(999);
+    //     }
+    //     else {
+    //         lastKnight->set_hp(0, lastKnight->get_maxhp());
+    //         lastKnight->revival(lastKnight);
+    //     }
 
-        army->set_omega_weapon_flag(true);
-    }
+    //     army->set_omega_weapon_flag(true);
+    // }
 };
 
-Hades::Hades(int event_id, BaseKnight* lastKnight, ArmyKnights* army) {
+Hades::Hades(int event_id) {
     this->id_event = event_id;
-    if (!army->get_hades_flag()) {
+    // if (!army->get_hades_flag()) {
 
-        if (lastKnight->get_level() >= 10 || 
-        (lastKnight->is_paladin(lastKnight->get_maxhp()) && lastKnight->get_level() >= 8)) {
-            if (!army->hasPaladinShield())
-                army->set_PaladinShield(true);
-        }
-        else {
-            lastKnight->revival(lastKnight);
-        }
+    //     if (lastKnight->get_level() >= 10 || 
+    //     (lastKnight->is_paladin(lastKnight->get_maxhp()) && lastKnight->get_level() >= 8)) {
+    //         if (!army->hasPaladinShield())
+    //             army->set_PaladinShield(true);
+    //     }
+    //     else {
+    //         lastKnight->revival(lastKnight);
+    //     }
 
-        army->set_hades_flag(true);
-    }
+    //     army->set_hades_flag(true);
+    // }
 };
 
 
@@ -548,9 +547,334 @@ bool NormalKnight::fight (BaseOpponent* opponent) {
         this->hp = this->maxhp;
         return true;
     }
-    
+    else if (opponent->get_event_id() == 10) {
+        if (this->level >= 10 && this->hp == this->maxhp) {
+            this->level = 10;
+            this->gil = 999;
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;
+        }
+    }
+    else if (opponent->get_event_id() == 11) {
+        if (this->level >= 10) {
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;  
+        }
+    }
+    else {
+        cout << "ERROR: OPPONENT->GET_EVENT_ID FAILED!" << endl;
+        return false;
+    }
 };
 
-bool DragonKnight::fight (BaseOpponent* opponent) {};
-bool LancelotKnight::fight (BaseOpponent* opponent) {};
-bool PaladinKnight::fight (BaseOpponent* opponent) {};
+bool LancelotKnight::fight (BaseOpponent* opponent) {
+    if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {
+        this->set_gil(this->gil + opponent->get_gil());
+        return true;
+    }
+    else if (opponent->get_event_id() == 6) {
+        if (this->level >= opponent->get_levelO()) {
+            this->set_level(this->level + 1);
+        }
+        else {
+            if (this->antidote >= 1) {
+                this->antidote = this->antidote - 1;
+                return true;
+            }
+            else {
+                int number_items = this->bag->get_number_items();
+                if (number_items == 0) {
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+                else if (number_items <= 3) {
+                    BaseItem* temp = this->bag->get_head_item();
+                    for (int i = 0; i < number_items; i++) {
+                        this->bag->set_head_item(temp->get_next_item());
+                        temp->set_next_item(0);
+                        delete temp;
+                        this->bag->set_number_items(this->bag->get_number_items() - 1);
+                        temp = this->bag->get_head_item();
+                    }
+                    this->bag->set_tail_item(0);
+
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+                else {
+                    BaseItem* temp = this->bag->get_head_item();
+                    for (int i = 0; i < 3; i++) {
+                        this->bag->set_head_item(temp->get_next_item());
+                        temp->set_next_item(0);
+                        delete temp;
+                        this->bag->set_number_items(this->bag->get_number_items() - 1);
+                        temp = this->bag->get_head_item();
+                    }
+                    
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+            }
+        }
+    }
+    else if (opponent->get_event_id() == 7) {
+        if (this->level >= opponent->get_levelO()) {
+            this->gil = this->gil * 2;
+            if (this->gil > 999) {
+                this->gil_changes = this->gil - 999;
+                this->gil = 999;
+            }
+        }
+        else {
+            this->gil = int(this->gil / 2);
+        }
+        
+        return true;
+
+    }
+    else if (opponent->get_event_id() == 8) {
+        if (this->gil >= 50) {
+            if (this->hp < int(this->maxhp / 3)) {
+                this->gil = this->gil - 50;
+                this->hp = this->hp + int(this->maxhp / 5);
+            }
+        }
+
+        return true;
+    }
+    else if (opponent->get_event_id() == 9) {
+        this->hp = this->maxhp;
+        return true;
+    }
+    else if (opponent->get_event_id() == 10) {
+        if (this->level >= 10 && this->hp == this->maxhp) {
+            this->level = 10;
+            this->gil = 999;
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;
+        }
+    }
+    else if (opponent->get_event_id() == 11) {
+        if (this->level >= 10) {
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;  
+        }
+    }
+    else {
+        cout << "ERROR: OPPONENT->GET_EVENT_ID FAILED!" << endl;
+        return false;
+    }
+};
+
+bool DragonKnight::fight (BaseOpponent* opponent) {
+    if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {
+        if (this->level >= opponent->get_levelO()) {
+            this->set_gil(this->gil + opponent->get_gil());
+            return true;
+        }
+        else {
+            this->hp = this->hp - opponent->get_baseDamage() * (opponent->get_levelO() - this->level);
+            if (this->hp <= 0) {
+                this->revival(this);
+                if (this->died) return false;
+            }
+            return true;
+        }
+    }
+    else if (opponent->get_event_id() == 6) {
+        if (this->level >= opponent->get_levelO()) {
+            this->set_level(this->level + 1);
+        }
+        
+        return true;
+    }
+    else if (opponent->get_event_id() == 7) {
+        if (this->level >= opponent->get_levelO()) {
+            this->gil = this->gil * 2;
+            if (this->gil > 999) {
+                this->gil_changes = this->gil - 999;
+                this->gil = 999;
+            }
+        }
+        else {
+            this->gil = int(this->gil / 2);
+        }
+        
+        return true;
+
+    }
+    else if (opponent->get_event_id() == 8) {
+        if (this->gil >= 50) {
+            if (this->hp < int(this->maxhp / 3)) {
+                this->gil = this->gil - 50;
+                this->hp = this->hp + int(this->maxhp / 5);
+            }
+        }
+
+        return true;
+    }
+    else if (opponent->get_event_id() == 9) {
+        this->hp = this->maxhp;
+        return true;
+    }
+    else if (opponent->get_event_id() == 10) {
+        this->level = 10;
+        this->gil = 999;
+        return true;
+        
+    }
+    else if (opponent->get_event_id() == 11) {
+        if (this->level >= 10) {
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;  
+        }
+    }
+    else {
+        cout << "ERROR: OPPONENT->GET_EVENT_ID FAILED!" << endl;
+        return false;
+    }
+};
+
+bool PaladinKnight::fight (BaseOpponent* opponent) {
+    if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {
+        this->set_gil(this->gil + opponent->get_gil());
+        return true;
+    }
+    else if (opponent->get_event_id() == 6) {
+        if (this->level >= opponent->get_levelO()) {
+            this->set_level(this->level + 1);
+        }
+        else {
+            if (this->antidote >= 1) {
+                this->antidote = this->antidote - 1;
+                return true;
+            }
+            else {
+                int number_items = this->bag->get_number_items();
+                if (number_items == 0) {
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+                else if (number_items <= 3) {
+                    BaseItem* temp = this->bag->get_head_item();
+                    for (int i = 0; i < number_items; i++) {
+                        this->bag->set_head_item(temp->get_next_item());
+                        temp->set_next_item(0);
+                        delete temp;
+                        this->bag->set_number_items(this->bag->get_number_items() - 1);
+                        temp = this->bag->get_head_item();
+                    }
+                    this->bag->set_tail_item(0);
+
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+                else {
+                    BaseItem* temp = this->bag->get_head_item();
+                    for (int i = 0; i < 3; i++) {
+                        this->bag->set_head_item(temp->get_next_item());
+                        temp->set_next_item(0);
+                        delete temp;
+                        this->bag->set_number_items(this->bag->get_number_items() - 1);
+                        temp = this->bag->get_head_item();
+                    }
+                    
+                    this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
+                    if (this->hp <= 0) return false;
+                    return true;
+                }
+            }
+        }
+    }
+    else if (opponent->get_event_id() == 7) {
+        if (this->level >= opponent->get_levelO()) {
+            this->gil = this->gil * 2;
+            if (this->gil > 999) {
+                this->gil_changes = this->gil - 999;
+                this->gil = 999;
+            }
+        }
+        
+        return true;
+
+    }
+    else if (opponent->get_event_id() == 8) {
+        if (this->hp < int(this->maxhp / 3)) {
+            this->hp = this->hp + int(this->maxhp / 5);
+        }
+        return true;
+    }
+    else if (opponent->get_event_id() == 9) {
+        this->hp = this->maxhp;
+        return true;
+    }
+    else if (opponent->get_event_id() == 10) {
+        if (this->level >= 10 && this->hp == this->maxhp) {
+            this->level = 10;
+            this->gil = 999;
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;
+        }
+    }
+    else if (opponent->get_event_id() == 11) {
+        if (this->level >= 8) {
+            return true;
+        }
+        else {
+            this->hp = 0;
+            this->revival(this);
+            if (this->died) return false;
+            else return true;  
+        }
+    }
+    else {
+        cout << "ERROR: OPPONENT->GET_EVENT_ID FAILED!" << endl;
+        return false;
+    }
+};
+
+    bool Antidote::canUse ( BaseKnight * knight) {
+        
+    };
+    void Antidote::use ( BaseKnight * knight ) {};

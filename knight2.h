@@ -309,7 +309,7 @@ public:
 class OmegaWeapon : public BaseOpponent {
 public:
     OmegaWeapon(){};
-    OmegaWeapon(int event_id, BaseKnight* lastKnight, ArmyKnights* army);
+    OmegaWeapon(int event_id);
     ~OmegaWeapon(){};
     int get_event_id () {return this->id_event;};
     int get_levelO () {return this->levelO;};
@@ -320,7 +320,7 @@ public:
 
 class Hades : public BaseOpponent {
     Hades(){};
-    Hades(int event_id, BaseKnight* lastKnight, ArmyKnights* army);
+    Hades(int event_id);
     ~Hades(){}; 
     int get_event_id () {return this->id_event;};
     int get_levelO () {return this->levelO;};
@@ -492,8 +492,8 @@ class Antidote : public BaseItem {
         this->item_type = ANTIDOTE;
     };
     ~Antidote() {};
-    bool canUse ( BaseKnight * knight) {};
-    void use ( BaseKnight * knight ) {};
+    bool canUse ( BaseKnight * knight);
+    void use ( BaseKnight * knight );
 
 };
 class PhoenixDownI : public BaseItem {
