@@ -36,5 +36,5 @@ int main(int argc, char ** argv) {
     //     cout << army.getKnight(i)->toString() << endl;
     // }
 
-    return 0;
+    // return 0;
 }

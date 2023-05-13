@@ -180,6 +180,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->antidote = antidote;
         knight->bag = new PaladinKnight_Bag(knight, phoenixdownI, antidote);
         knight->died = false;
+        knight->poisoned = false;
         knight->knightType = PALADIN;
     }
     else if (temp->is_lancelot(maxhp)) {
@@ -192,6 +193,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->gil_changes = 0;
         knight->antidote = antidote;
         knight->died = false;
+        knight->poisoned = false;
         knight->bag = new LancelotKnight_Bag(knight, phoenixdownI, antidote);
         knight->knightType = LANCELOT;
     }
@@ -206,6 +208,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->antidote = antidote;
         knight->bag = new DragonKnight_Bag(knight, phoenixdownI, antidote);
         knight->died = false;
+        knight->poisoned = false;
         knight->knightType = DRAGON;
     }
     else {
@@ -218,6 +221,7 @@ BaseKnight * BaseKnight::create(int id, int maxhp, int level, int gil, int antid
         knight->gil_changes = 0;
         knight->antidote = antidote;
         knight->died = false;
+        knight->poisoned = false;
         knight->bag = new NormalKnight_Bag(knight, phoenixdownI, antidote);
         knight->knightType = NORMAL;
     }
@@ -369,7 +373,54 @@ bool ArmyKnights::fight(BaseOpponent * opponent) {
     return this->ptr_lastKnight->fight(opponent);
     
 };
-bool ArmyKnights::adventure (Events * events){};
+
+bool ArmyKnights::adventure (Events * events) {
+    int number_events = events->count();
+    for (int i = 0; i < number_events; i++) {
+        if (events->get(i) == 1) {
+            pi
+        }
+        else if (events->get(i) == 2) {}
+        else if (events->get(i) == 3) {}
+        else if (events->get(i) == 4) {}
+        else if (events->get(i) == 5) {}
+        else if (events->get(i) == 6) {}
+        else if (events->get(i) == 7) {}
+        else if (events->get(i) == 8) {}
+        else if (events->get(i) == 9) {}
+        else if (events->get(i) == 10) {}
+        else if (events->get(i) == 11) {}
+        else if (events->get(i) == 112) {}
+        else if (events->get(i) == 113) {}
+        else if (events->get(i) == 114) {}
+        else if (events->get(i) == 95) {
+            if (!this->paladin_shield) {
+                this->paladin_shield = true;
+            }
+        }
+        else if (events->get(i) == 96) {
+            if (!this->lancelot_spear) {
+                this->lancelot_spear = true;
+            }
+        }
+        else if (events->get(i) == 97) {
+            if (!this->guinevere_hair) {
+                this->guinevere_hair = true;
+            }
+        }
+        else if (events->get(i) == 98) {
+            if (this->paladin_shield && this->lancelot_spear && this->guinevere_hair) {
+                if (!this->excalibur_sword) {
+                    this->excalibur_sword = true;
+                }
+            }
+        }
+        else if (events->get(i) == 99) {
+            
+        }
+    } 
+};
+
 int ArmyKnights::count() const {return this->number_knights;};
 BaseKnight * ArmyKnights::lastKnight() const {return this->ptr_lastKnight;};
 
@@ -398,7 +449,9 @@ void KnightAdventure::loadArmyKnights(const string & file_armyknight) {
 void KnightAdventure::loadEvents(const string & file_events) {
     this->events = new Events(file_events);
 };
-void KnightAdventure::run() {};
+void KnightAdventure::run() {
+    this->armyKnights->printResult(this->armyKnights->adventure(this->events));
+};
 
 /* * * END implementation of class KnightAdventure * * */
 
@@ -460,6 +513,15 @@ bool NormalKnight::fight (BaseOpponent* opponent) {
         }
         else {
             this->hp = this->hp - opponent->get_baseDamage() * (opponent->get_levelO() - this->level);
+            BaseItem* temp = this->bag->get_head_item();
+            while(temp) {
+                if (temp->canUse(this)) {
+                    temp->use(this);
+                    break;
+                }
+
+                temp = temp->get_next_item();
+            }
             if (this->hp <= 0) {
                 this->revival(this);
                 if (this->died) return false;
@@ -473,14 +535,21 @@ bool NormalKnight::fight (BaseOpponent* opponent) {
         }
         else {
             if (this->antidote >= 1) {
-                this->antidote = this->antidote - 1;
+                this->poisoned = true;
+                // this->antidote = this->antidote - 1;
+                BaseItem* temp = this->bag->get_head_item();
+                while(temp) {
+                    if (temp->canUse(this)) {
+                        temp->use(this);
+                    }
+                    temp = temp->get_next_item();
+                }
                 return true;
             }
             else {
                 int number_items = this->bag->get_number_items();
                 if (number_items == 0) {
                     this->hp = this->hp - 10;
-                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -496,7 +565,6 @@ bool NormalKnight::fight (BaseOpponent* opponent) {
                     this->bag->set_tail_item(0);
 
                     this->hp = this->hp - 10;
-                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -511,6 +579,14 @@ bool NormalKnight::fight (BaseOpponent* opponent) {
                     }
                     
                     this->hp = this->hp - 10;
+                    temp = this->bag->get_head_item();
+                    while(temp) {
+                        if (temp->canUse(this)) {
+                            temp->use(this);
+                            break;
+                        }
+                        temp = temp->get_next_item();
+                    }
                     if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
@@ -588,7 +664,16 @@ bool LancelotKnight::fight (BaseOpponent* opponent) {
         }
         else {
             if (this->antidote >= 1) {
-                this->antidote = this->antidote - 1;
+                this->poisoned = true;
+                // this->antidote = this->antidote - 1;
+                BaseItem* temp = this->bag->get_head_item();
+                while(temp) {
+                    if (temp->canUse(this)) {
+                        temp->use(this);
+                        break;
+                    }
+                    temp = temp->get_next_item();
+                }
                 return true;
             }
             else {
@@ -777,14 +862,23 @@ bool PaladinKnight::fight (BaseOpponent* opponent) {
         }
         else {
             if (this->antidote >= 1) {
-                this->antidote = this->antidote - 1;
+                this->poisoned = true;
+                // this->antidote = this->antidote - 1;
+                BaseItem* temp = this->bag->get_head_item();
+                while(temp) {
+                    if (temp->canUse(this)) {
+                        temp->use(this);
+                        break;
+                    }
+
+                    temp = temp->get_next_item();
+                }
                 return true;
             }
             else {
                 int number_items = this->bag->get_number_items();
                 if (number_items == 0) {
                     this->hp = this->hp - 10;
-                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -800,7 +894,6 @@ bool PaladinKnight::fight (BaseOpponent* opponent) {
                     this->bag->set_tail_item(0);
 
                     this->hp = this->hp - 10;
-                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -815,6 +908,15 @@ bool PaladinKnight::fight (BaseOpponent* opponent) {
                     }
                     
                     this->hp = this->hp - 10;
+                    temp = this->bag->get_head_item();
+                    while(temp) {
+                        if (temp->canUse(this)) {
+                            temp->use(this);
+                            break;
+                        }
+
+                        temp = temp->get_next_item();
+                    }
                     if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
@@ -874,7 +976,176 @@ bool PaladinKnight::fight (BaseOpponent* opponent) {
     }
 };
 
-    bool Antidote::canUse ( BaseKnight * knight) {
-        
-    };
-    void Antidote::use ( BaseKnight * knight ) {};
+bool Antidote::canUse ( BaseKnight * knight) {
+    if (knight->get_antidote() >= 1 && knight->get_poisoned()) return true;
+    else return false;
+};
+void Antidote::use ( BaseKnight * knight ) {
+    BaseItem* temp = knight->get_bag()->get_head_item();
+    if (temp == this) {
+        knight->get_bag()->set_head_item(temp->get_next_item());
+        temp->set_next_item(0);
+        delete temp;
+    }
+    else {
+        BaseItem* prev = temp;
+        while (temp->get_next_item() != this) {
+            prev = temp->get_next_item();
+            temp = temp->get_next_item();
+        }
+
+        temp = this->get_next_item();
+        prev->set_next_item(knight->get_bag()->get_head_item());
+        this->set_next_item(knight->get_bag()->get_head_item()->get_next_item());
+        knight->get_bag()->get_head_item()->set_next_item(temp);
+        knight->get_bag()->set_head_item(this->get_next_item());
+        this->set_next_item(0);
+
+        delete this;
+    }
+    
+    knight->set_antidote(knight->get_antidote() - 1);
+    knight->get_bag()->set_number_items(knight->get_bag()->get_number_items() - 1);
+    knight->set_poisoned(false);
+};
+
+bool PhoenixDownI::canUse ( BaseKnight * knight ){
+    if (knight->get_hp() <= 0) return true;
+    return false;
+};
+void PhoenixDownI::use ( BaseKnight * knight ){
+    BaseItem* temp = knight->get_bag()->get_head_item();
+    if (temp == this) {
+        knight->get_bag()->set_head_item(temp->get_next_item());
+        temp->set_next_item(0);
+        delete temp;
+    }
+    else {
+        BaseItem* prev = temp;
+        while (temp->get_next_item() != this) {
+            prev = temp->get_next_item();
+            temp = temp->get_next_item();
+        }
+
+        temp = this->get_next_item();
+        prev->set_next_item(knight->get_bag()->get_head_item());
+        this->set_next_item(knight->get_bag()->get_head_item()->get_next_item());
+        knight->get_bag()->get_head_item()->set_next_item(temp);
+        knight->get_bag()->set_head_item(this->get_next_item());
+        this->set_next_item(0);
+
+        delete this;
+    }
+
+    knight->set_hp(knight->get_maxhp(), knight->get_maxhp());
+    knight->get_bag()->set_number_items(knight->get_bag()->get_number_items() - 1);
+
+};
+
+bool PhoenixDownII::canUse ( BaseKnight * knight ){
+    if (knight->get_hp() < int(knight->get_maxhp() / 4)) return true;
+    return false;
+};
+void PhoenixDownII::use ( BaseKnight * knight ){
+    BaseItem* temp = knight->get_bag()->get_head_item();
+    if (temp == this) {
+        knight->get_bag()->set_head_item(temp->get_next_item());
+        temp->set_next_item(0);
+        delete temp;
+    }
+    else {
+        BaseItem* prev = temp;
+        while (temp->get_next_item() != this) {
+            prev = temp->get_next_item();
+            temp = temp->get_next_item();
+        }
+
+        temp = this->get_next_item();
+        prev->set_next_item(knight->get_bag()->get_head_item());
+        this->set_next_item(knight->get_bag()->get_head_item()->get_next_item());
+        knight->get_bag()->get_head_item()->set_next_item(temp);
+        knight->get_bag()->set_head_item(this->get_next_item());
+        this->set_next_item(0);
+
+        delete this;
+    }
+    
+    knight->get_bag()->set_number_items(knight->get_bag()->get_number_items() - 1);
+    knight->set_hp(knight->get_maxhp(), knight->get_maxhp());
+};
+
+bool PhoenixDownIII::canUse ( BaseKnight * knight ){
+    if (knight->get_hp() < int(knight->get_maxhp() / 3)) return true;
+    return false;
+};
+void PhoenixDownIII::use ( BaseKnight * knight ){
+    BaseItem* temp = knight->get_bag()->get_head_item();
+    if (temp == this) {
+        knight->get_bag()->set_head_item(temp->get_next_item());
+        temp->set_next_item(0);
+        delete temp;
+    }
+    else {
+        BaseItem* prev = temp;
+        while (temp->get_next_item() != this) {
+            prev = temp->get_next_item();
+            temp = temp->get_next_item();
+        }
+
+        temp = this->get_next_item();
+        prev->set_next_item(knight->get_bag()->get_head_item());
+        this->set_next_item(knight->get_bag()->get_head_item()->get_next_item());
+        knight->get_bag()->get_head_item()->set_next_item(temp);
+        knight->get_bag()->set_head_item(this->get_next_item());
+        this->set_next_item(0);
+
+        delete this;
+    }
+    
+    if (knight->get_hp() <= 0) {
+        knight->set_hp(int(knight->get_maxhp() / 3), knight->get_maxhp());
+    }
+    else  {
+        knight->set_hp(knight->get_hp() + int(knight->get_maxhp() / 4), knight->get_maxhp());
+    }
+
+    knight->get_bag()->set_number_items(knight->get_bag()->get_number_items() - 1);
+};
+
+bool PhoenixDownIV::canUse ( BaseKnight * knight ){
+    if (knight->get_hp() < int(knight->get_maxhp() / 2)) return true;
+    return false;
+};
+void PhoenixDownIV::use ( BaseKnight * knight ){
+    BaseItem* temp = knight->get_bag()->get_head_item();
+    if (temp == this) {
+        knight->get_bag()->set_head_item(temp->get_next_item());
+        temp->set_next_item(0);
+        delete temp;
+    }
+    else {
+        BaseItem* prev = temp;
+        while (temp->get_next_item() != this) {
+            prev = temp->get_next_item();
+            temp = temp->get_next_item();
+        }
+
+        temp = this->get_next_item();
+        prev->set_next_item(knight->get_bag()->get_head_item());
+        this->set_next_item(knight->get_bag()->get_head_item()->get_next_item());
+        knight->get_bag()->get_head_item()->set_next_item(temp);
+        knight->get_bag()->set_head_item(this->get_next_item());
+        this->set_next_item(0);
+
+        delete this;
+    }
+    
+    if (knight->get_hp() <= 0) {
+        knight->set_hp(knight->get_maxhp() / 2, knight->get_maxhp());
+    }
+    else {
+        knight->set_hp(knight->get_hp() + int(knight->get_maxhp() / 5), knight->get_maxhp());
+    }
+
+    knight->get_bag()->set_number_items(knight->get_bag()->get_number_items() - 1);
+};

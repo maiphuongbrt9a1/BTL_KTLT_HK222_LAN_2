@@ -27,6 +27,7 @@ protected:
     BaseBag * bag;
     KnightType knightType;
     bool died;
+    bool poisoned;
 
 public:
     BaseKnight() {};
@@ -64,7 +65,9 @@ public:
 
     BaseBag* get_bag() {return this->bag;};
 
-    void revival(BaseKnight* lastKnight); 
+    void revival(BaseKnight* lastKnight);
+    bool get_poisoned() const {return this->poisoned;}; 
+    void set_poisoned(bool flag) {this->poisoned = flag;};
     ~BaseKnight() {};
 };
 
@@ -340,6 +343,7 @@ public:
     BaseKnight* get_knight_name () {return this->knight;};
     BaseItem* get_head_item() {return this->head_item;};
     void set_head_item (BaseItem* ptr_head_item) {this->head_item = ptr_head_item;};
+    BaseItem* get_tail_item (BaseItem* ptr_tail_item) {return this->tail_item;};
     void set_tail_item (BaseItem* ptr_tail_item) {this->tail_item = ptr_tail_item;};
     void set_knight_name (BaseKnight* knight) {this->knight = knight;};
     int get_number_items() {return this->numbers;};
@@ -504,8 +508,8 @@ class PhoenixDownI : public BaseItem {
         this->item_type = PHOENIXDOWNI;
     };
     ~PhoenixDownI(){};
-    bool canUse ( BaseKnight * knight ){};
-    void use ( BaseKnight * knight ){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
 };
 class PhoenixDownII : public BaseItem {
     public:
@@ -515,8 +519,8 @@ class PhoenixDownII : public BaseItem {
         this->item_type = PHOENIXDOWNII;
     };
     ~PhoenixDownII(){};
-    bool canUse ( BaseKnight * knight ){};
-    void use ( BaseKnight * knight ){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
 };
 class PhoenixDownIII : public BaseItem {
     public:
@@ -526,8 +530,8 @@ class PhoenixDownIII : public BaseItem {
         this->item_type = PHOENIXDOWNIII;
     };
     ~PhoenixDownIII(){};
-    bool canUse ( BaseKnight * knight ){};
-    void use ( BaseKnight * knight ){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
 };
 class PhoenixDownIV : public BaseItem {
     public:
@@ -537,8 +541,8 @@ class PhoenixDownIV : public BaseItem {
         this->item_type = PHOENIXDOWNIV;
     };
     ~PhoenixDownIV(){};
-    bool canUse ( BaseKnight * knight ){};
-    void use ( BaseKnight * knight ){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
 };
 
 class KnightAdventure {
