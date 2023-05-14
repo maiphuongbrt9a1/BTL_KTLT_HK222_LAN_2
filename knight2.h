@@ -5,8 +5,7 @@
 
 // #define DEBUG
 
-enum ItemType {ANTIDOTE = 0, PHOENIXDOWN, PHOENIXDOWNI, PHOENIXDOWNII, PHOENIXDOWNIII, PHOENIXDOWNIV, PALADIN_SHIELD, 
-                LANCELOT_SPEAR, GUINEVERE_HAIR, EXCALIBUR_SWORD, NULL_ITEM};
+enum ItemType {ANTIDOTE = 0, PHOENIXDOWN, NULL_ITEM};
 
 class BaseItem;
 class BaseBag;
@@ -14,7 +13,7 @@ class BaseKnight;
 class BaseOpponent;
 class ArmyKnights;
 
-enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL };
+enum KnightType { PALADIN = 0, LANCELOT, DRAGON, NORMAL};
 class BaseKnight {
 protected:
     int id;
@@ -32,7 +31,7 @@ protected:
 public:
     BaseKnight() {};
     static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
-    virtual bool fight (BaseOpponent* opponent) = 0;
+    virtual bool fight_knight (BaseOpponent* opponent) = 0;
     string toString() const;
     
     bool is_paladin(int HP) const;
@@ -42,7 +41,10 @@ public:
 
     int get_gil() const {return this->gil;};
     void set_gil(int gil) {
-        if (gil > 999) this->gil = 999;
+        if (gil > 999) {
+            this->gil_changes = gil - 999;
+            this->gil = 999;
+        }
         else this->gil = gil;};
 
     int get_hp() const {return this->hp;};
@@ -68,35 +70,15 @@ public:
     void revival(BaseKnight* lastKnight);
     bool get_poisoned() const {return this->poisoned;}; 
     void set_poisoned(bool flag) {this->poisoned = flag;};
-    ~BaseKnight() {};
-};
+    
+    int get_gil_changes() const {return this->gil_changes;};
+    void set_gil_changes(int gil) {
+        this->gil_changes = gil;
+    }
 
-class PaladinKnight : public BaseKnight {
-    public:
-    PaladinKnight() {};
-    bool fight (BaseOpponent* opponent);
-    ~PaladinKnight() {delete this->bag;};
-};
-
-class LancelotKnight : public BaseKnight {
-    public:
-    LancelotKnight() {};
-    bool fight (BaseOpponent* opponent);
-    ~LancelotKnight() {delete this->bag;};
-};
-
-class DragonKnight : public BaseKnight {
-    public:
-    DragonKnight() {};
-    bool fight (BaseOpponent* opponent);
-    ~DragonKnight() {delete this->bag;};
-};
-
-class NormalKnight : public BaseKnight {
-    public:
-    NormalKnight() {};
-    bool fight (BaseOpponent* opponent);
-    ~NormalKnight() {delete this->bag;};
+    bool get_died() const {return this->died;};
+    void set_died(bool flag) {this->died = flag;};
+    virtual ~BaseKnight() {};
 };
 
 class BaseOpponent {
@@ -108,7 +90,7 @@ public:
     virtual int get_event_index () = 0;
 
     BaseOpponent() {};
-    ~BaseOpponent() {};
+    virtual ~BaseOpponent() {};
     
 protected:
     int levelO;
@@ -322,6 +304,7 @@ public:
 };
 
 class Hades : public BaseOpponent {
+public:
     Hades(){};
     Hades(int event_id);
     ~Hades(){}; 
@@ -335,7 +318,7 @@ class Hades : public BaseOpponent {
 class BaseBag {
 public:
     BaseBag() {};
-    ~BaseBag() {};
+    virtual ~BaseBag() {};
     virtual bool insertFirst(BaseItem * item);
     virtual BaseItem * get(ItemType itemType);
     virtual string toString() const;
@@ -355,26 +338,71 @@ protected:
     BaseItem* tail_item;
 };
 
+
+class PaladinKnight : public BaseKnight {
+    public:
+    PaladinKnight() {};
+    bool fight_knight (BaseOpponent* opponent);
+    ~PaladinKnight() {};
+};
+
+class LancelotKnight : public BaseKnight {
+    public:
+    LancelotKnight() {};
+    bool fight_knight (BaseOpponent* opponent);
+    ~LancelotKnight() {};
+};
+
+class DragonKnight : public BaseKnight {
+    public:
+    DragonKnight() {};
+    bool fight_knight (BaseOpponent* opponent);
+    ~DragonKnight() {};
+};
+
+class NormalKnight : public BaseKnight {
+    public:
+    NormalKnight() {};
+    bool fight_knight (BaseOpponent* opponent);
+    ~NormalKnight() {};
+};
+
 class DragonKnight_Bag : public BaseBag {
     public:
+    BaseItem * get(ItemType itemType);
+    // bool insertFirst(BaseItem * item);
+    // string toString() const;
+    
     DragonKnight_Bag() {};
     DragonKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~DragonKnight_Bag() {};
 };
 class LancelotKnight_Bag : public BaseBag {
     public:
+    // bool insertFirst(BaseItem * item);
+    // BaseItem * get(ItemType itemType);
+    // string toString() const;
+    
     LancelotKnight_Bag(){};
     LancelotKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~LancelotKnight_Bag(){};
 };
 class PaladinKnight_Bag : public BaseBag {
     public:
+    // bool insertFirst(BaseItem * item);
+    // BaseItem * get(ItemType itemType);
+    // string toString() const;
+    
     PaladinKnight_Bag(){};
     PaladinKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~PaladinKnight_Bag(){};
 };
 class NormalKnight_Bag : public BaseBag {
     public:
+    // bool insertFirst(BaseItem * item);
+    // BaseItem * get(ItemType itemType);
+    // string toString() const;
+    
     NormalKnight_Bag(){};
     NormalKnight_Bag(BaseKnight* knight, int number_phoenixdownI, int number_antidote);
     ~NormalKnight_Bag(){};
@@ -426,6 +454,7 @@ public:
     ~ArmyKnights();
     bool fight(BaseOpponent * opponent);
     bool adventure (Events * events);
+    bool update_army_knight_info(bool win);
     int count() const;
     BaseKnight * lastKnight() const;
 
@@ -469,30 +498,29 @@ public:
     void set_next_item (BaseItem* item) {this->next = item;};
     BaseItem* get_next_item() {return this->next;};
     
-    void set_item(BaseItem* item) {this->item = item;};
-    BaseItem* get_item () {return this->item;};
-
     void set_item_type(ItemType itemType) {this->item_type = itemType;};
     ItemType get_item_type () {return this->item_type;};
+
+    string get_item_name() const {return this->item_name;};
     
     BaseItem () {
-        this->item = 0;
         this->next = 0;
+        this->item_name = "";
         this->item_type = NULL_ITEM;
     };
 
-    ~BaseItem() {};
+    virtual ~BaseItem() {};
 protected:
-    BaseItem* item;
     BaseItem* next;
+    string item_name;
     ItemType item_type;
 };
 
 class Antidote : public BaseItem {
     public:
     Antidote(){
-        this->item = 0;
         this->next = 0;
+        this->item_name = "Antidote";
         this->item_type = ANTIDOTE;
     };
     ~Antidote() {};
@@ -503,9 +531,9 @@ class Antidote : public BaseItem {
 class PhoenixDownI : public BaseItem {
     public:
     PhoenixDownI(){
-        this->item = 0;
         this->next = 0;
-        this->item_type = PHOENIXDOWNI;
+        this->item_name = "PhoenixI";
+        this->item_type = PHOENIXDOWN;
     };
     ~PhoenixDownI(){};
     bool canUse ( BaseKnight * knight );
@@ -514,9 +542,9 @@ class PhoenixDownI : public BaseItem {
 class PhoenixDownII : public BaseItem {
     public:
     PhoenixDownII(){
-        this->item = 0;
         this->next = 0;
-        this->item_type = PHOENIXDOWNII;
+        this->item_name = "PhoenixII";
+        this->item_type = PHOENIXDOWN;
     };
     ~PhoenixDownII(){};
     bool canUse ( BaseKnight * knight );
@@ -525,9 +553,9 @@ class PhoenixDownII : public BaseItem {
 class PhoenixDownIII : public BaseItem {
     public:
     PhoenixDownIII(){
-        this->item = 0;
         this->next = 0;
-        this->item_type = PHOENIXDOWNIII;
+        this->item_name = "PhoenixIII";
+        this->item_type = PHOENIXDOWN;
     };
     ~PhoenixDownIII(){};
     bool canUse ( BaseKnight * knight );
@@ -536,9 +564,9 @@ class PhoenixDownIII : public BaseItem {
 class PhoenixDownIV : public BaseItem {
     public:
     PhoenixDownIV(){
-        this->item = 0;
         this->next = 0;
-        this->item_type = PHOENIXDOWNIV;
+        this->item_name = "PhoenixIV";
+        this->item_type = PHOENIXDOWN;
     };
     ~PhoenixDownIV(){};
     bool canUse ( BaseKnight * knight );

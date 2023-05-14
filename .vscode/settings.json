@@ -35,5 +35,20 @@
   ],
   "C_Cpp_Runner.useAddressSanitizer": false,
   "C_Cpp_Runner.showCompilationTime": false,
-  "cmake.cmakePath": "/path/to/cmake"
+  "cmake.cmakePath": "/path/to/cmake",
+  "files.associations": {
+    "*.tcc": "cpp",
+    "fstream": "cpp",
+    "limits": "cpp",
+    "functional": "cpp",
+    "tuple": "cpp",
+    "array": "cpp",
+    "memory": "cpp",
+    "istream": "cpp",
+    "ostream": "cpp",
+    "numeric": "cpp",
+    "sstream": "cpp",
+    "streambuf": "cpp",
+    "utility": "cpp"
+  }
 }
