@@ -74,16 +74,24 @@ DragonKnight_Bag::DragonKnight_Bag(BaseKnight* knight, int number_phoenixdownI, 
     this->tail_item = 0;
     
     if (number_phoenixdownI > 0) {
-        for (size_t i = 0; i < number_phoenixdownI; i++){
-            BaseItem* newItem = new PhoenixDownI();
-            this->insertFirst(newItem);
+        for (int i = 0; i < number_phoenixdownI; i++){
+            if (i < 5) {
+                BaseItem* newItem = new PhoenixDownI();
+                this->insertFirst(newItem);
+            }
+            else break;
         }
         
     }
     
     if (number_antidote > 0) {
-        BaseItem* newItem = new Antidote();
-        this->insertFirst(newItem);
+        for (int i = 0; i < number_antidote; i++) {
+            if (i < 5) {
+                BaseItem* newItem = new Antidote();
+                this->insertFirst(newItem);
+            }
+            else break;
+        }
     }
 };
 
@@ -94,16 +102,24 @@ LancelotKnight_Bag::LancelotKnight_Bag(BaseKnight* knight, int number_phoenixdow
     this->tail_item = 0;
     
     if (number_phoenixdownI > 0) {
-        for (size_t i = 0; i < number_phoenixdownI; i++){
-            BaseItem* newItem = new PhoenixDownI();
-            this->insertFirst(newItem);
+        for (int i = 0; i < number_phoenixdownI; i++){
+            if (i < 5) {
+                BaseItem* newItem = new PhoenixDownI();
+                this->insertFirst(newItem);
+            }
+            else break;
         }
         
     }
     
     if (number_antidote > 0) {
-        BaseItem* newItem = new Antidote();
-        this->insertFirst(newItem);
+        for (int i = 0; i < number_antidote; i++) {
+            if (i < 5) {
+                BaseItem* newItem = new Antidote();
+                this->insertFirst(newItem);
+            }
+            else break;
+        }
     }
 };
 
@@ -114,16 +130,24 @@ PaladinKnight_Bag::PaladinKnight_Bag(BaseKnight* knight, int number_phoenixdownI
     this->tail_item = 0;
     
     if (number_phoenixdownI > 0) {
-        for (size_t i = 0; i < number_phoenixdownI; i++){
-            BaseItem* newItem = new PhoenixDownI();
-            this->insertFirst(newItem);
+        for (int i = 0; i < number_phoenixdownI; i++){
+            if (i < 5) {
+                BaseItem* newItem = new PhoenixDownI();
+                this->insertFirst(newItem);
+            }
+            else break;
         }
         
     }
     
     if (number_antidote > 0) {
-        BaseItem* newItem = new Antidote();
-        this->insertFirst(newItem);
+        for (int i = 0; i < number_antidote; i++) {
+            if (i < 5) {
+                BaseItem* newItem = new Antidote();
+                this->insertFirst(newItem);
+            }
+            else break;
+        }
     }
 };
 
@@ -134,16 +158,24 @@ NormalKnight_Bag::NormalKnight_Bag(BaseKnight* knight, int number_phoenixdownI, 
     this->tail_item = 0;
     
     if (number_phoenixdownI > 0) {
-        for (size_t i = 0; i < number_phoenixdownI; i++){
-            BaseItem* newItem = new PhoenixDownI();
-            this->insertFirst(newItem);
+        for (int i = 0; i < number_phoenixdownI; i++){
+            if (i < 5) {    
+                BaseItem* newItem = new PhoenixDownI();
+                this->insertFirst(newItem);
+            }
+            else break;
         }
         
     }
     
     if (number_antidote > 0) {
-        BaseItem* newItem = new Antidote();
-        this->insertFirst(newItem);
+        for (int i = 0; i < number_antidote; i++) {
+            if (i < 5) {
+                BaseItem* newItem = new Antidote();
+                this->insertFirst(newItem);
+            }
+            else break;
+        }
     }
 };
 
@@ -864,56 +896,121 @@ bool ArmyKnights::adventure (Events * events) {
     for (int i = 0; i < number_events; i++) {
         if (events->get(i) == 1) {
             BaseOpponent* ptr_MadBear = new MadBear(i, 1);
-            bool win = this->fight(ptr_MadBear);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_MadBear);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_MadBear;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_MadBear;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
         }
         else if (events->get(i) == 2) {
             BaseOpponent* ptr_Bandit = new Bandit(i, 2);
-            bool win = this->fight(ptr_Bandit);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_Bandit);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_Bandit;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_Bandit;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
-
         }
         else if (events->get(i) == 3) {
             BaseOpponent* ptr_LordLupin = new LordLupin(i, 3);
-            bool win = this->fight(ptr_LordLupin);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_LordLupin);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_LordLupin;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_LordLupin;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
         }
         else if (events->get(i) == 4) {
             BaseOpponent* ptr_Elf = new Elf(i, 4);
-            bool win = this->fight(ptr_Elf);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_Elf);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_Elf;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_Elf;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
         }
         else if (events->get(i) == 5) {
             BaseOpponent* ptr_Troll = new Troll(i, 5);
-            bool win = this->fight(ptr_Troll);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_Troll);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_Troll;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_Troll;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
         }
         else if (events->get(i) == 6) {
             BaseOpponent* ptr_Tornbery = new Tornbery(i, 6);
-            bool win = this->fight(ptr_Tornbery);
+            bool win = false;
+            bool continue_flag = false;
+            
+            do
+            {
+                win = this->fight(ptr_Tornbery);
+                if (win) break;
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_Tornbery;
+                    return false;
+                }
+            } while (continue_flag);
+            
             delete ptr_Tornbery;
-            bool continue_flag = update_army_knight_info(win);
-            if (!continue_flag) return false;
         }
         else if (events->get(i) == 7) {
             BaseOpponent* ptr_QueenOfCards = new QueenOfCards(i, 7);
             bool win = this->fight(ptr_QueenOfCards);
             delete ptr_QueenOfCards;
             if (this->ptr_lastKnight->get_gil_changes() > 0) {
-                for (int i = this->number_knights - 2; i >= 0; i--) {
-                    this->knights_arr[i]->set_gil(this->knights_arr[i + 1]->get_gil_changes());
-                    this->knights_arr[i + 1]->set_gil_changes(0);
-                    if (this->knights_arr[i]->get_gil_changes() > 0) continue;
+                for (int j = this->number_knights - 2; j >= 0; j--) {
+                    this->knights_arr[j]->set_gil(this->knights_arr[j]->get_gil() + this->knights_arr[j + 1]->get_gil_changes());
+                    this->knights_arr[j + 1]->set_gil_changes(0);
+                    if (this->knights_arr[j]->get_gil_changes() > 0) continue;
                     else break;
                 }
             }
@@ -939,21 +1036,42 @@ bool ArmyKnights::adventure (Events * events) {
             if (!this->omega_weapon_flag) {
                 BaseOpponent* ptr_OmegaWeapon = new OmegaWeapon(10);
                 this->omega_weapon_flag = true;
-                bool win = this->fight(ptr_OmegaWeapon);
+                bool win = false;
+                bool continue_flag = false;
+                
+                do
+                {
+                    win = this->fight(ptr_OmegaWeapon);
+                    if (win) break;
+                    continue_flag = update_army_knight_info(win);
+                    if (!continue_flag) {
+                        delete ptr_OmegaWeapon;
+                        return false;
+                    }
+                } while (continue_flag);
+                
                 delete ptr_OmegaWeapon;
-                bool continue_flag = update_army_knight_info(win);
-                if (!continue_flag) return false;
             }
         }
         else if (events->get(i) == 11) {
             if (!this->hades) {
                 BaseOpponent* ptr_Hades = new Hades(11);
                 this->hades = true;
-                bool win = this->fight(ptr_Hades);
+                bool win = false;
+                bool continue_flag = false;
+                
+                do
+                {
+                    win = this->fight(ptr_Hades);
+                    if (win) break;
+                    continue_flag = update_army_knight_info(win);
+                    if (!continue_flag) {
+                        delete ptr_Hades;
+                        return false;
+                    }
+                } while (continue_flag);
+                
                 delete ptr_Hades;
-                bool continue_flag = update_army_knight_info(win);
-                if (!this->paladin_shield) this->paladin_shield = true;
-                if (!continue_flag) return false;
             }
         }
         else if (events->get(i) == 112) {
