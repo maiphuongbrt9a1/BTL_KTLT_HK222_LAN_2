@@ -388,6 +388,7 @@ bool NormalKnight::fight_knight(BaseOpponent* opponent) {
                     this->bag->set_tail_item(0);
 
                     this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -520,6 +521,7 @@ bool PaladinKnight::fight_knight(BaseOpponent* opponent) {
                     this->bag->set_tail_item(0);
 
                     this->hp = this->hp - 10;
+                    if (this->hp <= 0) this->revival(this);
                     if (this->hp <= 0) return false;
                     return true;
                 }
@@ -581,7 +583,7 @@ bool PaladinKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;
         }
     }
@@ -592,7 +594,7 @@ bool PaladinKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;  
         }
     }
@@ -706,7 +708,7 @@ bool LancelotKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;
         }
     }
@@ -717,7 +719,7 @@ bool LancelotKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;  
         }
     }
@@ -737,7 +739,7 @@ bool DragonKnight::fight_knight(BaseOpponent* opponent) {
             this->hp = this->hp - opponent->get_baseDamage() * (opponent->get_levelO() - this->level);
             if (this->hp <= 0) {
                 this->revival(this);
-                if (this->died) return false;
+                if (this->hp <= 0) return false;
             }
             return true;
         }
@@ -792,7 +794,7 @@ bool DragonKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;  
         }
     }
@@ -906,6 +908,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_MadBear;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -924,6 +927,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Bandit;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -942,6 +946,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_LordLupin;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -960,6 +965,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Elf;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -978,6 +984,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Troll;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -996,6 +1003,7 @@ bool ArmyKnights::adventure (Events * events) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Tornbery;
+                    this->printInfo();
                     return false;
                 }
             } while (continue_flag);
@@ -1046,6 +1054,7 @@ bool ArmyKnights::adventure (Events * events) {
                     continue_flag = update_army_knight_info(win);
                     if (!continue_flag) {
                         delete ptr_OmegaWeapon;
+                        this->printInfo();
                         return false;
                     }
                 } while (continue_flag);
@@ -1067,6 +1076,7 @@ bool ArmyKnights::adventure (Events * events) {
                     continue_flag = update_army_knight_info(win);
                     if (!continue_flag) {
                         delete ptr_Hades;
+                        this->printInfo();
                         return false;
                     }
                 } while (continue_flag);
