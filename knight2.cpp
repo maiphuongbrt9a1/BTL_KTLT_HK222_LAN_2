@@ -369,9 +369,8 @@ ArmyKnights::~ArmyKnights() {
 };
 
 bool ArmyKnights::fight(BaseOpponent * opponent) {
-    bool win = this->ptr_lastKnight->fight_knight(opponent);
+    bool win = this->ptr_lastKnight->BaseKnight::fight_knight(opponent);
     return win;
-    
 };
 
 bool ArmyKnights::update_army_knight_info(bool win) {
@@ -858,6 +857,7 @@ bool NormalKnight::fight_knight (BaseOpponent* opponent) {
     }
 };
 
+
 bool LancelotKnight::fight_knight (BaseOpponent* opponent) {
     if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {
         this->set_gil(this->gil + opponent->get_gil());
@@ -982,6 +982,7 @@ bool LancelotKnight::fight_knight (BaseOpponent* opponent) {
     }
 };
 
+
 bool DragonKnight::fight_knight (BaseOpponent* opponent) {
     if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {
         if (this->level >= opponent->get_levelO()) {
@@ -1055,6 +1056,8 @@ bool DragonKnight::fight_knight (BaseOpponent* opponent) {
         return false;
     }
 };
+
+
 
 bool PaladinKnight::fight_knight (BaseOpponent* opponent) {
     if (opponent->get_event_id() >= 1 && opponent->get_event_id() <= 5) {

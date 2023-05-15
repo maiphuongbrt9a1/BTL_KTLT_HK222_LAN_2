@@ -30,6 +30,12 @@ protected:
 
 public:
     BaseKnight() {};
+
+    int get_id() const {return this->id;};
+    void set_id(int id) {this->id = id;};
+    void set_maxhp(int maxhp) {this->maxhp = maxhp;};
+    void set_knightType(KnightType knightType) {this->knightType = knightType;};
+
     static BaseKnight * create(int id, int maxhp, int level, int gil, int antidote, int phoenixdownI);
     virtual bool fight_knight (BaseOpponent* opponent) = 0;
     string toString() const;
@@ -66,7 +72,7 @@ public:
         else this->antidote = 5;};
 
     BaseBag* get_bag() {return this->bag;};
-
+    void set_bag(BaseBag* bag) {this->bag = bag;};
     void revival(BaseKnight* lastKnight);
     bool get_poisoned() const {return this->poisoned;}; 
     void set_poisoned(bool flag) {this->poisoned = flag;};
@@ -79,6 +85,89 @@ public:
     bool get_died() const {return this->died;};
     void set_died(bool flag) {this->died = flag;};
     virtual ~BaseKnight() {};
+};
+
+class BaseItem {
+public:
+    virtual bool canUse ( BaseKnight * knight ) = 0;
+    virtual void use ( BaseKnight * knight ) = 0;
+    
+    void set_next_item (BaseItem* item) {this->next = item;};
+    BaseItem* get_next_item() {return this->next;};
+    
+    void set_item_type(ItemType itemType) {this->item_type = itemType;};
+    ItemType get_item_type () {return this->item_type;};
+
+    string get_item_name() const {return this->item_name;};
+    
+    BaseItem () {
+        this->next = 0;
+        this->item_name = "";
+        this->item_type = NULL_ITEM;
+    };
+
+    virtual ~BaseItem() {};
+protected:
+    BaseItem* next;
+    string item_name;
+    ItemType item_type;
+};
+
+class Antidote : public BaseItem {
+    public:
+    Antidote(){
+        this->next = 0;
+        this->item_name = "Antidote";
+        this->item_type = ANTIDOTE;
+    };
+    ~Antidote() {};
+    bool canUse ( BaseKnight * knight);
+    void use ( BaseKnight * knight );
+
+};
+class PhoenixDownI : public BaseItem {
+    public:
+    PhoenixDownI(){
+        this->next = 0;
+        this->item_name = "PhoenixI";
+        this->item_type = PHOENIXDOWN;
+    };
+    ~PhoenixDownI(){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
+};
+class PhoenixDownII : public BaseItem {
+    public:
+    PhoenixDownII(){
+        this->next = 0;
+        this->item_name = "PhoenixII";
+        this->item_type = PHOENIXDOWN;
+    };
+    ~PhoenixDownII(){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
+};
+class PhoenixDownIII : public BaseItem {
+    public:
+    PhoenixDownIII(){
+        this->next = 0;
+        this->item_name = "PhoenixIII";
+        this->item_type = PHOENIXDOWN;
+    };
+    ~PhoenixDownIII(){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
+};
+class PhoenixDownIV : public BaseItem {
+    public:
+    PhoenixDownIV(){
+        this->next = 0;
+        this->item_name = "PhoenixIV";
+        this->item_type = PHOENIXDOWN;
+    };
+    ~PhoenixDownIV(){};
+    bool canUse ( BaseKnight * knight );
+    void use ( BaseKnight * knight );
 };
 
 class BaseOpponent {
@@ -338,35 +427,6 @@ protected:
     BaseItem* tail_item;
 };
 
-
-class PaladinKnight : public BaseKnight {
-    public:
-    PaladinKnight() {};
-    bool fight_knight (BaseOpponent* opponent);
-    ~PaladinKnight() {};
-};
-
-class LancelotKnight : public BaseKnight {
-    public:
-    LancelotKnight() {};
-    bool fight_knight (BaseOpponent* opponent);
-    ~LancelotKnight() {};
-};
-
-class DragonKnight : public BaseKnight {
-    public:
-    DragonKnight() {};
-    bool fight_knight (BaseOpponent* opponent);
-    ~DragonKnight() {};
-};
-
-class NormalKnight : public BaseKnight {
-    public:
-    NormalKnight() {};
-    bool fight_knight (BaseOpponent* opponent);
-    ~NormalKnight() {};
-};
-
 class DragonKnight_Bag : public BaseBag {
     public:
     BaseItem * get(ItemType itemType);
@@ -408,6 +468,36 @@ class NormalKnight_Bag : public BaseBag {
     ~NormalKnight_Bag(){};
 };
 
+class PaladinKnight : public BaseKnight {
+    public:
+    PaladinKnight() {};
+    bool fight_knight (BaseOpponent* opponent) override;
+    ~PaladinKnight() {};
+};
+
+class LancelotKnight : public BaseKnight {
+    public:
+    LancelotKnight() {};
+    bool fight_knight (BaseOpponent* opponent) override;
+
+    ~LancelotKnight() {};
+};
+
+class DragonKnight : public BaseKnight {
+    public:
+    DragonKnight() {};
+    bool fight_knight (BaseOpponent* opponent) override;
+
+    ~DragonKnight() {};
+};
+
+class NormalKnight : public BaseKnight {
+    public:
+    NormalKnight() {};
+    bool fight_knight (BaseOpponent* opponent) override;
+
+    ~NormalKnight() {};
+};
 
 class Events {
 public:
@@ -490,89 +580,6 @@ private:
     bool hades;
 };
 
-class BaseItem {
-public:
-    virtual bool canUse ( BaseKnight * knight ) = 0;
-    virtual void use ( BaseKnight * knight ) = 0;
-    
-    void set_next_item (BaseItem* item) {this->next = item;};
-    BaseItem* get_next_item() {return this->next;};
-    
-    void set_item_type(ItemType itemType) {this->item_type = itemType;};
-    ItemType get_item_type () {return this->item_type;};
-
-    string get_item_name() const {return this->item_name;};
-    
-    BaseItem () {
-        this->next = 0;
-        this->item_name = "";
-        this->item_type = NULL_ITEM;
-    };
-
-    virtual ~BaseItem() {};
-protected:
-    BaseItem* next;
-    string item_name;
-    ItemType item_type;
-};
-
-class Antidote : public BaseItem {
-    public:
-    Antidote(){
-        this->next = 0;
-        this->item_name = "Antidote";
-        this->item_type = ANTIDOTE;
-    };
-    ~Antidote() {};
-    bool canUse ( BaseKnight * knight);
-    void use ( BaseKnight * knight );
-
-};
-class PhoenixDownI : public BaseItem {
-    public:
-    PhoenixDownI(){
-        this->next = 0;
-        this->item_name = "PhoenixI";
-        this->item_type = PHOENIXDOWN;
-    };
-    ~PhoenixDownI(){};
-    bool canUse ( BaseKnight * knight );
-    void use ( BaseKnight * knight );
-};
-class PhoenixDownII : public BaseItem {
-    public:
-    PhoenixDownII(){
-        this->next = 0;
-        this->item_name = "PhoenixII";
-        this->item_type = PHOENIXDOWN;
-    };
-    ~PhoenixDownII(){};
-    bool canUse ( BaseKnight * knight );
-    void use ( BaseKnight * knight );
-};
-class PhoenixDownIII : public BaseItem {
-    public:
-    PhoenixDownIII(){
-        this->next = 0;
-        this->item_name = "PhoenixIII";
-        this->item_type = PHOENIXDOWN;
-    };
-    ~PhoenixDownIII(){};
-    bool canUse ( BaseKnight * knight );
-    void use ( BaseKnight * knight );
-};
-class PhoenixDownIV : public BaseItem {
-    public:
-    PhoenixDownIV(){
-        this->next = 0;
-        this->item_name = "PhoenixIV";
-        this->item_type = PHOENIXDOWN;
-    };
-    ~PhoenixDownIV(){};
-    bool canUse ( BaseKnight * knight );
-    void use ( BaseKnight * knight );
-};
-
 class KnightAdventure {
 private:
     ArmyKnights * armyKnights;
@@ -581,7 +588,6 @@ private:
 public:
     KnightAdventure();
     ~KnightAdventure();
-
     void loadArmyKnights(const string &);
     void loadEvents(const string &);
     void run();
