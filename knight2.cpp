@@ -917,23 +917,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
 
-            do
-            {
-                win = this->fight(ptr_MadBear);
-                if (win) {
-                    this->update_gil_info_army_knight();
-                    break;
-                }
-                continue_flag = update_army_knight_info(win);
-                if (!continue_flag) {
-                    delete ptr_MadBear;
-                    this->printInfo();
-                    return false;
-                }
-
+            win = this->fight(ptr_MadBear);
+            if (win) {
+                this->update_gil_info_army_knight();
+            }
+            continue_flag = update_army_knight_info(win);
+            if (!continue_flag) {
+                delete ptr_MadBear;
                 this->printInfo();
-            } while (continue_flag);
-            
+                return false;
+            }
             delete ptr_MadBear;
         }
         else if (events->get(i) == 2) {
@@ -941,22 +934,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
             
-            do
-            {
-                win = this->fight(ptr_Bandit);
-                if (win) {
-                    this->update_gil_info_army_knight();
-                    break;
-                }
-                continue_flag = update_army_knight_info(win);
-                if (!continue_flag) {
-                    delete ptr_Bandit;
-                    this->printInfo();
-                    return false;
-                }
+            win = this->fight(ptr_Bandit);
+            if (win) {
+                this->update_gil_info_army_knight();
+            }
+            continue_flag = update_army_knight_info(win);
+            if (!continue_flag) {
+                delete ptr_Bandit;
                 this->printInfo();
-            } while (continue_flag);
-            
+                return false;
+            }
             delete ptr_Bandit;
         }
         else if (events->get(i) == 3) {
@@ -964,21 +951,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
             
-            do
-            {
-                win = this->fight(ptr_LordLupin);
-                if (win) {
-                    this->update_gil_info_army_knight();
-                    break;
-                }
-                continue_flag = update_army_knight_info(win);
-                if (!continue_flag) {
-                    delete ptr_LordLupin;
-                    this->printInfo();
-                    return false;
-                }
+            win = this->fight(ptr_LordLupin);
+            if (win) {
+                this->update_gil_info_army_knight();
+            }
+            continue_flag = update_army_knight_info(win);
+            if (!continue_flag) {
+                delete ptr_LordLupin;
                 this->printInfo();
-            } while (continue_flag);
+                return false;
+            }
             
             delete ptr_LordLupin;
         }
@@ -987,21 +969,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
             
-            do
-            {
-                win = this->fight(ptr_Elf);
-                if (win) {
-                    this->update_gil_info_army_knight();
-                    break;
-                }
-                continue_flag = update_army_knight_info(win);
-                if (!continue_flag) {
-                    delete ptr_Elf;
-                    this->printInfo();
-                    return false;
-                }
+            win = this->fight(ptr_Elf);
+            if (win) {
+                this->update_gil_info_army_knight();
+            }
+            continue_flag = update_army_knight_info(win);
+            if (!continue_flag) {
+                delete ptr_Elf;
                 this->printInfo();
-            } while (continue_flag);
+                return false;
+            }
             
             delete ptr_Elf;
         }
@@ -1010,22 +987,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
             
-            do
-            {
-                win = this->fight(ptr_Troll);
-                if (win) {
-                    this->update_gil_info_army_knight();
-                    break;
-                }
-                continue_flag = update_army_knight_info(win);
-                if (!continue_flag) {
-                    delete ptr_Troll;
-                    this->printInfo();
-                    return false;
-                }
+            win = this->fight(ptr_Troll);
+            if (win) {
+                this->update_gil_info_army_knight();
+            }
+            continue_flag = update_army_knight_info(win);
+            if (!continue_flag) {
+                delete ptr_Troll;
                 this->printInfo();
-            } while (continue_flag);
-            
+                return false;
+            }
             delete ptr_Troll;
         }
         else if (events->get(i) == 6) {
@@ -1033,19 +1004,16 @@ bool ArmyKnights::adventure (Events * events) {
             bool win = false;
             bool continue_flag = false;
             
-            do
-            {
-                win = this->fight(ptr_Tornbery);
-                if (win) break;
+            win = this->fight(ptr_Tornbery);
+            if (!win) {
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Tornbery;
                     this->printInfo();
                     return false;
                 }
-                this->printInfo();
-            } while (continue_flag);
-            
+                
+            }
             delete ptr_Tornbery;
         }
         else if (events->get(i) == 7) {
@@ -1077,18 +1045,15 @@ bool ArmyKnights::adventure (Events * events) {
                 bool win = false;
                 bool continue_flag = false;
                 
-                do
-                {
-                    win = this->fight(ptr_OmegaWeapon);
-                    if (win) break;
+                win = this->fight(ptr_OmegaWeapon);
+                if (!win) {
                     continue_flag = update_army_knight_info(win);
                     if (!continue_flag) {
                         delete ptr_OmegaWeapon;
                         this->printInfo();
                         return false;
                     }
-                    this->printInfo();
-                } while (continue_flag);
+                }
                 
                 delete ptr_OmegaWeapon;
             }
@@ -1099,29 +1064,22 @@ bool ArmyKnights::adventure (Events * events) {
                 this->hades = true;
                 bool win = false;
                 bool continue_flag = false;
-                int number_items_in_bag = 0;
-                int gil_before_revival = 0;
                 
-                do
-                {
-                    number_items_in_bag = this->ptr_lastKnight->get_bag()->get_number_items();
-                    gil_before_revival = this->ptr_lastKnight->get_gil();
-                    
-                    win = this->fight(ptr_Hades);
-                    if (win) {
-                        if (number_items_in_bag == this->ptr_lastKnight->get_bag()->get_number_items() && this->ptr_lastKnight->get_gil() == gil_before_revival) {
-                            this->paladin_shield = true;
-                        }
-                        break;
+                int number_items_in_bag = this->ptr_lastKnight->get_bag()->get_number_items();
+                int gil_before_revival = this->ptr_lastKnight->get_gil();
+                
+                win = this->fight(ptr_Hades);
+                if (win) {
+                    if (number_items_in_bag == this->ptr_lastKnight->get_bag()->get_number_items() && this->ptr_lastKnight->get_gil() == gil_before_revival) {
+                        this->paladin_shield = true;
                     }
-                    continue_flag = update_army_knight_info(win);
-                    if (!continue_flag) {
-                        delete ptr_Hades;
-                        this->printInfo();
-                        return false;
-                    }
+                }
+                continue_flag = update_army_knight_info(win);
+                if (!continue_flag) {
+                    delete ptr_Hades;
                     this->printInfo();
-                } while (continue_flag);
+                    return false;
+                }
                 
                 delete ptr_Hades;
             }
