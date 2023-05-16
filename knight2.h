@@ -504,7 +504,7 @@ public:
     bool update_army_knight_info(bool win);
     int count() const;
     BaseKnight * lastKnight() const;
-
+    void update_gil_info_army_knight();
     bool hasPaladinShield() const;
     void set_PaladinShield(bool flag) {this->paladin_shield = flag;};
     bool hasLancelotSpear() const;

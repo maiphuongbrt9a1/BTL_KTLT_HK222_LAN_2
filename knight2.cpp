@@ -321,7 +321,7 @@ void BaseKnight::revival(BaseKnight* lastKnight) {
         
     }
     
-    if (!second_step) {
+    if (!first_step && !second_step) {
         lastKnight->died = true;
     }
 };
@@ -345,7 +345,7 @@ bool NormalKnight::fight_knight(BaseOpponent* opponent) {
             }
             if (this->hp <= 0) {
                 this->revival(this);
-                if (this->died) return false;
+                if (this->hp <= 0) return false;
             }
             return true;
         }
@@ -456,7 +456,7 @@ bool NormalKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;
         }
     }
@@ -467,7 +467,7 @@ bool NormalKnight::fight_knight(BaseOpponent* opponent) {
         else {
             this->hp = 0;
             this->revival(this);
-            if (this->died) return false;
+            if (this->hp <= 0) return false;
             else return true;  
         }
     }
@@ -893,6 +893,22 @@ bool ArmyKnights::update_army_knight_info(bool win) {
     } else return true;
 };
 
+void ArmyKnights::update_gil_info_army_knight() {
+    if (this->ptr_lastKnight->get_gil_changes() > 0) {
+        if (this->number_knights >= 2) {
+            for (int j = this->number_knights - 2; j >= 0; j--) {
+                this->knights_arr[j]->set_gil(this->knights_arr[j]->get_gil() + this->knights_arr[j + 1]->get_gil_changes());
+                this->knights_arr[j + 1]->set_gil_changes(0);
+                if (this->knights_arr[j]->get_gil_changes() > 0) continue;
+                else break;
+            }
+        }
+        else return;
+    }
+
+    this->knights_arr[0]->set_gil_changes(0); 
+}
+
 bool ArmyKnights::adventure (Events * events) {
     int number_events = events->count();
     for (int i = 0; i < number_events; i++) {
@@ -900,17 +916,22 @@ bool ArmyKnights::adventure (Events * events) {
             BaseOpponent* ptr_MadBear = new MadBear(i, 1);
             bool win = false;
             bool continue_flag = false;
-            
+
             do
             {
                 win = this->fight(ptr_MadBear);
-                if (win) break;
+                if (win) {
+                    this->update_gil_info_army_knight();
+                    break;
+                }
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_MadBear;
                     this->printInfo();
                     return false;
                 }
+
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_MadBear;
@@ -923,13 +944,17 @@ bool ArmyKnights::adventure (Events * events) {
             do
             {
                 win = this->fight(ptr_Bandit);
-                if (win) break;
+                if (win) {
+                    this->update_gil_info_army_knight();
+                    break;
+                }
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Bandit;
                     this->printInfo();
                     return false;
                 }
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_Bandit;
@@ -942,13 +967,17 @@ bool ArmyKnights::adventure (Events * events) {
             do
             {
                 win = this->fight(ptr_LordLupin);
-                if (win) break;
+                if (win) {
+                    this->update_gil_info_army_knight();
+                    break;
+                }
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_LordLupin;
                     this->printInfo();
                     return false;
                 }
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_LordLupin;
@@ -961,13 +990,17 @@ bool ArmyKnights::adventure (Events * events) {
             do
             {
                 win = this->fight(ptr_Elf);
-                if (win) break;
+                if (win) {
+                    this->update_gil_info_army_knight();
+                    break;
+                }
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Elf;
                     this->printInfo();
                     return false;
                 }
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_Elf;
@@ -980,13 +1013,17 @@ bool ArmyKnights::adventure (Events * events) {
             do
             {
                 win = this->fight(ptr_Troll);
-                if (win) break;
+                if (win) {
+                    this->update_gil_info_army_knight();
+                    break;
+                }
                 continue_flag = update_army_knight_info(win);
                 if (!continue_flag) {
                     delete ptr_Troll;
                     this->printInfo();
                     return false;
                 }
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_Troll;
@@ -1006,6 +1043,7 @@ bool ArmyKnights::adventure (Events * events) {
                     this->printInfo();
                     return false;
                 }
+                this->printInfo();
             } while (continue_flag);
             
             delete ptr_Tornbery;
@@ -1014,15 +1052,7 @@ bool ArmyKnights::adventure (Events * events) {
             BaseOpponent* ptr_QueenOfCards = new QueenOfCards(i, 7);
             bool win = this->fight(ptr_QueenOfCards);
             delete ptr_QueenOfCards;
-            if (this->ptr_lastKnight->get_gil_changes() > 0) {
-                for (int j = this->number_knights - 2; j >= 0; j--) {
-                    this->knights_arr[j]->set_gil(this->knights_arr[j]->get_gil() + this->knights_arr[j + 1]->get_gil_changes());
-                    this->knights_arr[j + 1]->set_gil_changes(0);
-                    if (this->knights_arr[j]->get_gil_changes() > 0) continue;
-                    else break;
-                }
-            }
-
+            this->update_gil_info_army_knight();
             bool continue_flag = update_army_knight_info(win);
             if (!continue_flag) return false;
         }
@@ -1057,6 +1087,7 @@ bool ArmyKnights::adventure (Events * events) {
                         this->printInfo();
                         return false;
                     }
+                    this->printInfo();
                 } while (continue_flag);
                 
                 delete ptr_OmegaWeapon;
@@ -1068,17 +1099,28 @@ bool ArmyKnights::adventure (Events * events) {
                 this->hades = true;
                 bool win = false;
                 bool continue_flag = false;
+                int number_items_in_bag = 0;
+                int gil_before_revival = 0;
                 
                 do
                 {
+                    number_items_in_bag = this->ptr_lastKnight->get_bag()->get_number_items();
+                    gil_before_revival = this->ptr_lastKnight->get_gil();
+                    
                     win = this->fight(ptr_Hades);
-                    if (win) break;
+                    if (win) {
+                        if (number_items_in_bag == this->ptr_lastKnight->get_bag()->get_number_items() && this->ptr_lastKnight->get_gil() == gil_before_revival) {
+                            this->paladin_shield = true;
+                        }
+                        break;
+                    }
                     continue_flag = update_army_knight_info(win);
                     if (!continue_flag) {
                         delete ptr_Hades;
                         this->printInfo();
                         return false;
                     }
+                    this->printInfo();
                 } while (continue_flag);
                 
                 delete ptr_Hades;
@@ -1089,8 +1131,8 @@ bool ArmyKnights::adventure (Events * events) {
             bool insert = this->ptr_lastKnight->get_bag()->insertFirst(new_item);
             if (!insert) {
                 if (this->number_knights >= 2) {
-                    for (int i = this->number_knights - 2; i >= 0; i--) {
-                        insert = this->knights_arr[i]->get_bag()->insertFirst(new_item);
+                    for (int j = this->number_knights - 2; j >= 0; j--) {
+                        insert = this->knights_arr[j]->get_bag()->insertFirst(new_item);
                         if (insert) break;
                     }
 
@@ -1106,8 +1148,8 @@ bool ArmyKnights::adventure (Events * events) {
             bool insert = this->ptr_lastKnight->get_bag()->insertFirst(new_item);
             if (!insert) {
                 if (this->number_knights >= 2) {
-                    for (int i = this->number_knights - 2; i >= 0; i--) {
-                        insert = this->knights_arr[i]->get_bag()->insertFirst(new_item);
+                    for (int j = this->number_knights - 2; j >= 0; j--) {
+                        insert = this->knights_arr[j]->get_bag()->insertFirst(new_item);
                         if (insert) break;
                     }
 
@@ -1123,8 +1165,8 @@ bool ArmyKnights::adventure (Events * events) {
             bool insert = this->ptr_lastKnight->get_bag()->insertFirst(new_item);
             if (!insert) {
                 if (this->number_knights >= 2) {
-                    for (int i = this->number_knights - 2; i >= 0; i--) {
-                        insert = this->knights_arr[i]->get_bag()->insertFirst(new_item);
+                    for (int j = this->number_knights - 2; j >= 0; j--) {
+                        insert = this->knights_arr[j]->get_bag()->insertFirst(new_item);
                         if (insert) break;
                     }
 
@@ -1197,6 +1239,7 @@ bool ArmyKnights::adventure (Events * events) {
 
                         if (HP_ultimecia > 0) {
                             this->knights_arr[j]->set_died(true);
+                            this->knights_arr[j]->set_hp(0, this->knights_arr[j]->get_maxhp());
                             this->number_knights = this->number_knights - 1;
                         }
                     }
@@ -1349,7 +1392,8 @@ void PhoenixDownI::use ( BaseKnight * knight ){
 };
 
 bool PhoenixDownII::canUse ( BaseKnight * knight ){
-    if (knight->get_hp() < int(knight->get_maxhp() / 4)) return true;
+    if (knight->get_hp() < int(knight->get_maxhp() / 4)) 
+        return true;
     return false;
 };
 void PhoenixDownII::use ( BaseKnight * knight ){
